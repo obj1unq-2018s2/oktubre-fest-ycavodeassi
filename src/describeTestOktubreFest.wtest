@@ -1,0 +1,91 @@
+import	carpa.*
+import	jarra.*
+import	persona.*
+import	cerveza.*
+
+describe "OktubreFest" {
+	
+	//Cervezas
+	const	beck		=	new	Rubia(lupulo=0.05, graduacion=0.07, origen="Aleman"		)
+	const	hoegaarden	=	new	Roja (lupulo=0.08, graduacion=0.05,	origen="Belga"		)
+	const	hofbrau		=	new	Roja (lupulo=0.04, graduacion=0.08, origen="Aleman"		)
+	//Jarras
+	const	jarraBeck01	=	new Jarra(capacidadLts=1, 		cerveza=beck		)
+	const	jarraBeck02	=	new Jarra(capacidadLts=2, 		cerveza=beck		)
+	const	jarraBeck03	=	new Jarra(capacidadLts=5, 		cerveza=beck		)
+	const	jarraBeck04	=	new Jarra(capacidadLts=3, 		cerveza=beck		)
+	const	jarraHoeg01	=	new Jarra(capacidadLts=1,		cerveza=hoegaarden	)
+	const	jarraHofbrau=	new	Jarra(capacidadLts=0.5,		cerveza=hofbrau		)
+	//Personas
+	const	belga01		=	new Belga (peso=80,  nivelDeAguante=40, gustaMusica=false	)
+	const	aleman01	=	new	Aleman(peso=100, nivelDeAguante=50, gustaMusica=true	)
+	const	aleman02	=	new	Aleman(peso=120, nivelDeAguante=60, gustaMusica=true	)
+	//Carpas
+	const	carpa01		=	new Carpa(cervezaALaVenta=beck, 	  capacidadPersonas=5, tieneMusica=true, personas=#{aleman01,aleman02}	)
+	const	carpa02		=	new	Carpa(cervezaALaVenta=hoegaarden, capacidadPersonas=2, tieneMusica=false								)
+	
+	fixture {
+		graduacionReglamentaria.graduacion(0.064)
+		aleman01.comprarJarra(jarraBeck01)
+		aleman01.comprarJarra(jarraBeck02)
+		aleman01.comprarJarra(jarraBeck03)
+		aleman01.comprarJarra(jarraBeck04)
+		aleman02.comprarJarra(jarraBeck03)
+		aleman02.comprarJarra(jarraBeck03)
+		aleman02.comprarJarra(jarraHoeg01)
+	}
+	
+	test "Contenido de Alcohol de Jarra Hofbrau" {
+		assert.equals(0.04,jarraHofbrau.contenidoAlcohol())
+	}
+	
+	test "Aleman01 ingirio X lts de alcohol" {
+		assert.equals(0.77,aleman01.alcoholIngerido())
+	}
+	
+	test "Aleman01 esta ebrio" {
+		assert.that(aleman01.estaEbrio())
+	}
+	
+	test "Aleman02 esta ebrio" {
+		assert.that(aleman02.estaEbrio())
+	}
+	
+	test "Belga01 NO esta ebrio" {
+		assert.notThat(belga01.estaEbrio())
+	}
+	
+	test "Aleman02 quiere entrar a Carpa01" {
+		assert.that(aleman02.quiereEntrarA(carpa01))
+	}
+	
+	test "Aleman01 no quiere entrar a Carpa02" {
+		assert.notThat(aleman01.quiereEntrarA(carpa02))
+	}
+	
+	test "Carpa02 deja ingresar a Belga01" {
+		assert.that(carpa02.puedeIngresar(belga01))
+	}
+	
+	test "Belga01 puede ingresar Carpa02" {
+		assert.that(belga01.puedeEntrarA(carpa02))
+	}
+	
+	test "Belga01 ingresa a Carpa02" {
+		carpa02.ingresarPersona(belga01)
+		assert.equals(#{belga01},carpa02.personas())
+	}
+	
+	test "Ebrios Empedernidos" {
+		assert.equals(2,carpa01.cantidadEbriosEmpedernidos())
+	}
+	
+	test "Aleman01 es Patriota" {
+		assert.that(aleman01.esPatriota())
+	}
+	
+	test "Aleman02 No es Patriota" {
+		assert.notThat(aleman02.esPatriota())
+	}
+	
+}

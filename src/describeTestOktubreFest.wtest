@@ -67,6 +67,10 @@ describe "OktubreFest" {
 		assert.that(carpa02.puedeIngresar(belga01))
 	}
 	
+	test "Carpa01 No deja ingresar a aleman01" {
+		assert.throwsExceptionWithMessage("No puede ingresar borracho", {	carpa01.ingresarPersona(aleman01)	})
+	}
+	
 	test "Belga01 puede ingresar Carpa02" {
 		assert.that(belga01.puedeEntrarA(carpa02))
 	}
